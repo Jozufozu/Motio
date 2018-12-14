@@ -40,7 +40,7 @@ public class ItemCreativeRing extends ItemBase implements IBauble
         @Override
         public long capacity()
         {
-            return 0;
+            return Long.MAX_VALUE;
         }
     
         @Override

@@ -22,4 +22,46 @@ public class MotioAPI
     {
         return stack.getCapability(CapabilityMotio.MOTIO_CAPABILITY, null);
     }
+
+    @FunctionalInterface
+    public static interface Consumer<R> {
+        R run();
+    }
+
+    @Nullable
+    public static <R> R runIfAvailable(IMotio motio, long toConsume, Consumer<R> function)
+    {
+        if (motio.available() >= toConsume)
+        {
+            R result = function.run();
+            motio.tap(toConsume, false);
+            return result;
+        }
+
+        return null;
+    }
+
+    public static <R> R runIfAvailable(IMotio motio, long toConsume, R fallback, Consumer<R> function)
+    {
+        if (motio.available() >= toConsume)
+        {
+            R result = function.run();
+            motio.tap(toConsume, false);
+            return result;
+        }
+
+        return fallback;
+    }
+
+    public static boolean runIfAvailable(IMotio motio, long toConsume, Runnable function)
+    {
+        if (motio.available() >= toConsume)
+        {
+            function.run();
+            motio.tap(toConsume, false);
+            return true;
+        }
+
+        return false;
+    }
 }
